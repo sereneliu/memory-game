@@ -10,14 +10,14 @@ var cards = ["fa fa-diamond", "fa fa-diamond", "fa fa-paper-plane-o", "fa fa-pap
  *   - add each card's HTML to the page
  */
 for (x = 0; x < 16; x++) {
-    $(".deck").append("<li class='card'><i class='name'></i></li>");
+    $(".deck").append("<li class='card'><i></i></li>");
 }
 
 shuffle(cards);
-console.log(cards);
 
 for (y = 0; y < cards.length; y++) {
-    $(".deck").replace("name", cards[y]);
+    card = $(".deck").find("i")[y];
+    $(card).attr("class", cards[y]);
 }
 
 // Shuffle function from http://stackoverflow.com/a/2450976
