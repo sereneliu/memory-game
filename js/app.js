@@ -49,11 +49,22 @@ function shuffle(array) {
 
 var openCards = [];
 
-function addEventListener() {
+function showCard() {
     $.each($(".deck li"), function () {
-        $(".deck li").click(function() {
-            $(this).attr("class", "card open show");
+        $(this).click(function() {
+            if ($($(this)).hasClass("card open show") == false) {
+                if (openCards.length < 2) {
+                    $(this).attr("class", "card open show");
+                    addToOpenCards($(this));
+                    console.log(openCards);
+                }
+            }
         });
     });
 }
 
+function addToOpenCards(card) {
+    openCards.push(card.find("i").attr("class"));
+}
+
+showCard();
