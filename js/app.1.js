@@ -1,24 +1,17 @@
 /*
  * Create a list that holds all of your cards
  */
-var cards = ["fa fa-diamond", "fa fa-diamond", "fa fa-paper-plane-o", "fa fa-paper-plane-o", "fa fa-anchor", "fa fa-anchor", "fa fa-bolt", "fa fa-bolt", "fa fa-cube", "fa fa-cube", "fa fa-leaf", "fa fa-leaf", "fa fa-bicycle", "fa fa-bicycle", "fa fa-bomb", "fa fa-bomb"];
-
+var cardNames = ["fa fa-diamond", "fa fa-diamond", "fa fa-paper-plane-o", "fa fa-paper-plane-o", "fa fa-anchor", "fa fa-anchor", "fa fa-bolt", "fa fa-bolt", "fa fa-cube", "fa fa-cube", "fa fa-leaf", "fa fa-leaf", "fa fa-bicycle", "fa fa-bicycle", "fa fa-bomb", "fa fa-bomb"];
+var cards =[];
+var openCards = [];
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
  *   - loop through each card and create its HTML
  *   - add each card's HTML to the page
  */
-for (x = 0; x < 16; x++) {
-    $(".deck").append("<li class='card'><i></i></li>");
-}
 
-shuffle(cards);
-
-for (y = 0; y < cards.length; y++) {
-    card = $(".deck").find("i")[y];
-    $(card).attr("class", cards[y]);
-}
+shuffle(cardNames);
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -47,55 +40,62 @@ function shuffle(array) {
  *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
  */
 
-var openCards = [];
+var Card = function(name) {
+    this.element = $("<li class='card'><i></i></li>");
+    $(".deck").append(this.element);
+    this.child = $(this.element[0].children[0]);
+    this.child.attr("class", name);
+};
 
-function showCard() {
-    $.each($(".deck li"), function () {
-        $(this).click(function() {
-            if ($($(this)).hasClass("card open show") == false) {
-                if (openCards.length < 2) {
-                    $(this).attr("class", "card open show");
-                    addToOpenCards($(this));
-                    console.log(openCards);
-                    console.log(openCards.length);
-                }
-                if (openCards.length == 2) {
-                    isMatch();
-                    openCards = [];
-                }
+Card.prototype.open = function() {
+    $(this.element[0]).attr("class", "card open show");
+};
+
+Card.prototype.match = function() {
+    $(this.element[0]).attr("class", "card match");
+};
+
+Card.prototype.close = function() {
+    $(this.element[0]).attr("class", "card");
+};
+
+function makeCards() {
+    for (n = 0; n < cardNames.length; n++) {
+        cards[n] = new Card(cardNames[n]);
+    }
+    return cards;
+}
+
+function addToOpenCards(x) {
+    openCards.push(x);
+//    openCards.push(x.child.attr("class"));
+}
+
+function isMatch() {
+    if (openCards[0].child.attr("class") == openCards[1].child.attr("class")) {
+        openCards[0].match();
+        openCards[1].match();
+    }
+    else {
+        openCards[0].close();
+        openCards[1].close();
+    }
+}
+
+function game() {
+    makeCards();
+    $.each(cards, function(i, card) {
+        $(card.element[0]).click(function() {
+            if (openCards.length < 2) { 
+                card.open();
+                addToOpenCards(card);
+            }
+            else {
+                isMatch(card);
+                openCards = [];
             }
         });
     });
 }
 
-function addToOpenCards(card) {
-    openCards.push(card.find("i").attr("class"));
-}
-
-function isMatch() {
-    if (openCards[0] == openCards[1]) {
-        $.each($(".deck li"), function () {
-            if ($($(this)).hasClass("card open show")) {
-                $(this).attr("class", "card match");
-            }
-        });
-    }
-    else {
-        $.each($(".deck li"), function () {
-            $(this).attr("class", "card");
-        });
-    }
-}
-
-function game() {
-    if (openCards.length < 2) {
-        showCard();
-    }
-}
-
 game();
-
-// if openCards.length == 0 or 1, click click click
-// if 2, check for match
-// if match, card match
-// if not, card
