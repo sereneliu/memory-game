@@ -81,6 +81,21 @@ function isMatch() {
     }
 }
 
+var moves = 0;
+function updateMoves() {
+    $(".moves").empty().append(moves);
+}
+
+function reset() {
+    $(".restart").click(function() {
+        moves = 0;
+        updateMoves();
+        $(".deck").empty();
+        shuffle(cardNames);
+        game();
+    });
+}
+
 function game() {
     makeCards();
     $.each(cards, function(i, card) {
@@ -88,6 +103,9 @@ function game() {
             if (openCards.length < 2) { 
                 card.open();
                 addToOpenCards(card);
+                moves++;
+                updateMoves();
+                console.log(moves);
             }
             else {
                 isMatch(card);
@@ -98,3 +116,4 @@ function game() {
 }
 
 game();
+reset();
