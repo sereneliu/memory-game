@@ -100,12 +100,13 @@ function game() {
     makeCards();
     $.each(cards, function(i, card) {
         $(card.element[0]).click(function() {
-            if (openCards.length < 2) { 
-                card.open();
-                addToOpenCards(card);
-                moves++;
-                updateMoves();
-                console.log(moves);
+            if (openCards.length < 2) {
+                if ($(this).attr("class") == "card") {
+                    card.open();
+                    addToOpenCards(card);
+                    moves++;
+                    updateMoves();
+                }
             }
             else {
                 isMatch(card);
