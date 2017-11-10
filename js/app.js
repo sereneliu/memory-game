@@ -4,6 +4,7 @@
 var cardNames = ["fa fa-diamond", "fa fa-diamond", "fa fa-paper-plane-o", "fa fa-paper-plane-o", "fa fa-anchor", "fa fa-anchor", "fa fa-bolt", "fa fa-bolt", "fa fa-cube", "fa fa-cube", "fa fa-leaf", "fa fa-leaf", "fa fa-bicycle", "fa fa-bicycle", "fa fa-bomb", "fa fa-bomb"];
 var cards =[];
 var openCards = [];
+var openCardsAllowed = 2;
 /*
  * Display the cards on the page
  *   - shuffle the list of cards using the provided "shuffle" method below
@@ -45,6 +46,19 @@ var Card = function(name) {
     $(".deck").append(this.element);
     this.child = $(this.element[0].children[0]);
     this.child.attr("class", name);
+    var card = this;
+    $(this.element[0]).click(function() {
+        setupTimer();
+        if (openCards.length < openCardsAllowed) {
+            if ($(this).attr("class") == "card") {
+                card.open();
+                addToOpenCards(card);
+                moves++;
+                updateMoves();
+                setTimeout(isMatch, 1500);
+            }
+        }
+    });
 };
 
 Card.prototype.open = function() {
@@ -71,13 +85,17 @@ function addToOpenCards(x) {
 }
 
 function isMatch() {
-    if (openCards[0].child.attr("class") == openCards[1].child.attr("class")) {
-        openCards[0].match();
-        openCards[1].match();
-    }
-    else {
-        openCards[0].close();
-        openCards[1].close();
+    if (openCards.length == 2) {
+        if (openCards[0].child.attr("class") == openCards[1].child.attr("class")) {
+            openCards[0].match();
+            openCards[1].match();
+        }
+        else {
+            openCards[0].close();
+            openCards[1].close();
+        }
+        openCards = [];
+        console.log(cards.every(checkMatch));
     }
 }
 
@@ -86,35 +104,51 @@ function updateMoves() {
     $(".moves").empty().append(moves);
 }
 
+var startTime = 0;
+var timer = null;
+
+var time = function() {
+    if (cards.every(checkMatch) == false) {
+        updateTime(new Date() - startTime);
+    }
+};
+
+function updateTime(interval) {
+    var seconds = interval / 1000;
+    var sec = Math.floor(seconds) % 60;
+    var min = Math.floor(seconds / 60) % 60;
+    var hr = Math.floor(seconds / 3600);
+    $(".timer").empty().append(hr + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2));
+}
+
+function setupTimer() {
+  if (timer == null) {
+    startTime = new Date();
+    timer = setInterval(time, 1000);
+  }
+}
+
+function clearTimer() {
+    clearInterval(timer);
+    timer = null;
+    updateTime(0);
+
+}
+
+function checkMatch(card) {
+    return $(card.element[0]).attr("class") == "card match";
+}
+
 function reset() {
     $(".restart").click(function() {
+        clearTimer();
         moves = 0;
         updateMoves();
         $(".deck").empty();
         shuffle(cardNames);
-        game();
+        makeCards();
     });
 }
 
-function game() {
-    makeCards();
-    $.each(cards, function(i, card) {
-        $(card.element[0]).click(function() {
-            if (openCards.length < 2) {
-                if ($(this).attr("class") == "card") {
-                    card.open();
-                    addToOpenCards(card);
-                    moves++;
-                    updateMoves();
-                }
-            }
-            else {
-                isMatch(card);
-                openCards = [];
-            }
-        });
-    });
-}
-
-game();
+makeCards();
 reset();
