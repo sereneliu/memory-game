@@ -34,7 +34,7 @@ var Card = function(name) {
     this.child.attr("class", name);
     var card = this;
     this.element.click(function() {
-        setupTimer();
+        Timer.setup();
         if (openCards.length < openCardsAllowed) {
             if ($(this).attr("class") == "card") {
                 card.open();
@@ -89,33 +89,37 @@ function updateMoves() {
 }
 
 // Create timer
-var startTime = 0;
-var endTime = 0;
+var Timer = function() {
+};
+
 var timer = null;
+var startTime = 0;
+var currentTime = new Date() - startTime;
+var displayTime = 0;
 
 var time = function() {
     if (cards.every(checkMatch) == false) {
-        updateTime(new Date() - startTime);
+        Timer.display(currentTime);
     }
     else {
     }
 };
 
-function updateTime(interval) {
+Timer.prototype.display = function(interval) {
     var seconds = interval / 1000;
     var sec = Math.floor(seconds) % 60;
     var min = Math.floor(seconds / 60) % 60;
     var hr = Math.floor(seconds / 3600);
-    endTime = hr + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2);
-    $(".timer").text(endTime);
-}
+    displayTime = hr + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2);
+    $(".timer").text(displayTime);
+};
 
-function setupTimer() {
+Timer.prototype.setup = function() {
   if (timer == null) {
     startTime = new Date();
     timer = setInterval(time, 1000);
   }
-}
+};
 
 function clearTimer() {
     clearInterval(timer);
