@@ -34,7 +34,7 @@ var Card = function(name) {
     this.child.attr("class", name);
     var card = this;
     this.element.click(function() {
-        Timer.setup();
+        timer.setup();
         if (openCards.length < openCardsAllowed) {
             if ($(this).attr("class") == "card") {
                 card.open();
@@ -92,17 +92,15 @@ function updateMoves() {
 var Timer = function() {
 };
 
-var timer = null;
+var intervalHandler = null;
 var startTime = 0;
-var currentTime = new Date() - startTime;
 var displayTime = 0;
 
-var time = function() {
-    if (cards.every(checkMatch) == false) {
-        Timer.display(currentTime);
-    }
-    else {
-    }
+Timer.prototype.setup = function() {
+  if (intervalHandler == null) {
+    startTime = new Date();
+    intervalHandler = setInterval(this.ticker, 1000);
+  }
 };
 
 Timer.prototype.display = function(interval) {
@@ -114,19 +112,19 @@ Timer.prototype.display = function(interval) {
     $(".timer").text(displayTime);
 };
 
-Timer.prototype.setup = function() {
-  if (timer == null) {
-    startTime = new Date();
-    timer = setInterval(time, 1000);
-  }
+Timer.prototype.ticker = function() {
+    if (cards.every(checkMatch) == false) {
+        timer.display(new Date() - startTime);
+    }
 };
 
-function clearTimer() {
-    clearInterval(timer);
-    timer = null;
-    updateTime(0);
+Timer.prototype.clear = function() {
+    clearInterval(intervalHandler);
+    intervalHandler = null;
+    timer.display(0);
+};
 
-}
+var timer = new Timer();
 
 /* Set up the game board
  *  - empty the deck
@@ -144,7 +142,7 @@ function setupGame() {
     $(".stars").each(function() {
         $(this).find("i").attr("class", "fa fa-star");
     });
-    clearTimer();
+    timer.clear();
 }
 
 function reset() {
@@ -182,7 +180,7 @@ function isMatch() {
         openCards = [];
         cards.every(checkMatch);
         if (cards.every(checkMatch)) {
-            $(".modal-body p").text("In " + endTime + " with " + moves + " moves and " + stars + " stars.");
+            $(".modal-body p").text("In " + displayTime + " with " + moves + " moves and " + stars + " stars.");
             $(".modal-footer button").click(function() {
                 setupGame();
                 $(".modal").modal("hide");
