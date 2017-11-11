@@ -12,8 +12,6 @@ var openCardsAllowed = 2;
  *   - add each card's HTML to the page
  */
 
-shuffle(cardNames);
-
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -62,7 +60,7 @@ var Card = function(name) {
 };
 
 Card.prototype.open = function() {
-    $(this.element[0]).attr("class", "card open show");
+    $(this.element[0]).attr("class", "card open display");
 };
 
 Card.prototype.match = function() {
@@ -95,21 +93,45 @@ function isMatch() {
             openCards[1].close();
         }
         openCards = [];
-        console.log(cards.every(checkMatch));
+        cards.every(checkMatch);
+        if (cards.every(checkMatch)) {
+            $(".modal-body p").empty().append("in " + endTime + " with " + moves + " moves and " + stars + " stars");
+            $(".modal-footer button").click(function() {
+                setupGame();
+                $(".modal").modal("hide");
+            });
+            $(".modal").modal("show");
+        }
     }
 }
 
 var moves = 0;
+var stars = 3;
 function updateMoves() {
     $(".moves").empty().append(moves);
+    if (moves == 25) {
+        $(".star3 i").attr("class", "fa fa-star-o");
+        stars--;
+    }
+    if (moves == 33) {
+        $(".star2 i").attr("class", "fa fa-star-o");
+        stars--;
+    }
+    if (moves == 41) {
+        $(".star1 i").attr("class", "fa fa-star-o");
+        stars--;
+    }
 }
 
 var startTime = 0;
+var endTime = 0;
 var timer = null;
 
 var time = function() {
     if (cards.every(checkMatch) == false) {
         updateTime(new Date() - startTime);
+    }
+    else {
     }
 };
 
@@ -118,7 +140,8 @@ function updateTime(interval) {
     var sec = Math.floor(seconds) % 60;
     var min = Math.floor(seconds / 60) % 60;
     var hr = Math.floor(seconds / 3600);
-    $(".timer").empty().append(hr + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2));
+    endTime = hr + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2);
+    $(".timer").empty().append(endTime);
 }
 
 function setupTimer() {
@@ -139,16 +162,22 @@ function checkMatch(card) {
     return $(card.element[0]).attr("class") == "card match";
 }
 
-function reset() {
-    $(".restart").click(function() {
-        clearTimer();
-        moves = 0;
-        updateMoves();
-        $(".deck").empty();
-        shuffle(cardNames);
-        makeCards();
+function setupGame() {
+    $(".deck").empty();
+    shuffle(cardNames);
+    makeCards();
+    moves = 0;
+    updateMoves();
+    stars = 3;
+    $(".stars").each(function() {
+        $(this).find("i").attr("class", "fa fa-star");
     });
+    clearTimer();
 }
 
-makeCards();
+function reset() {
+    $(".restart").click(setupGame);
+}
+
+setupGame();
 reset();

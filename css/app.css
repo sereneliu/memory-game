@@ -71,7 +71,7 @@ h1 {
     cursor: default;
 }
 
-.deck .card.show {
+.deck .card.display {
     font-size: 33px;
 }
 
@@ -119,4 +119,11 @@ h1 {
     float: right;
     margin-left: 5px;
     cursor: pointer;
+}
+
+.modal-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
 }
