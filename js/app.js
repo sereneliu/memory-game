@@ -1,16 +1,8 @@
-/*
- * Create a list that holds all of your cards
- */
+/* global $ */
+
+// Create two lists: one that holds all of the cards and one that holds all of the cards in the shuffled order
 var cardNames = ["fa fa-diamond", "fa fa-diamond", "fa fa-paper-plane-o", "fa fa-paper-plane-o", "fa fa-anchor", "fa fa-anchor", "fa fa-bolt", "fa fa-bolt", "fa fa-cube", "fa fa-cube", "fa fa-leaf", "fa fa-leaf", "fa fa-bicycle", "fa fa-bicycle", "fa fa-bomb", "fa fa-bomb"];
 var cards =[];
-var openCards = [];
-var openCardsAllowed = 2;
-/*
- * Display the cards on the page
- *   - shuffle the list of cards using the provided "shuffle" method below
- *   - loop through each card and create its HTML
- *   - add each card's HTML to the page
- */
 
 // Shuffle function from http://stackoverflow.com/a/2450976
 function shuffle(array) {
@@ -27,25 +19,21 @@ function shuffle(array) {
     return array;
 }
 
-
-/*
- * set up the event listener for a card. If a card is clicked:
- *  - display the card's symbol (put this functionality in another function that you call from this one)
- *  - add the card to a *list* of "open" cards (put this functionality in another function that you call from this one)
- *  - if the list already has another card, check to see if the two cards match
- *    + if the cards do match, lock the cards in the open position (put this functionality in another function that you call from this one)
- *    + if the cards do not match, remove the cards from the list and hide the card's symbol (put this functionality in another function that you call from this one)
- *    + increment the move counter and display it on the page (put this functionality in another function that you call from this one)
- *    + if all cards have matched, display a message with the final score (put this functionality in another function that you call from this one)
+/* Create a Card prototype:
+ * set up the HTML to be added to the page
+ * set up the event listener for each card. If a card is clicked:
+ *  - display the card's symbol
+ *  - add the card to a *list* of "open" cards
+ *  - increment moves and update the display
+ *  - check for match
  */
-
 var Card = function(name) {
     this.element = $("<li class='card'><i></i></li>");
     $(".deck").append(this.element);
-    this.child = $(this.element[0].children[0]);
+    this.child = this.element.children();
     this.child.attr("class", name);
     var card = this;
-    $(this.element[0]).click(function() {
+    this.element.click(function() {
         setupTimer();
         if (openCards.length < openCardsAllowed) {
             if ($(this).attr("class") == "card") {
@@ -59,52 +47,29 @@ var Card = function(name) {
     });
 };
 
+// Set up the three stages a Card can be in (opened, matched, or closed)
 Card.prototype.open = function() {
-    $(this.element[0]).attr("class", "card open display");
+    this.element.attr("class", "card open display");
 };
 
 Card.prototype.match = function() {
-    $(this.element[0]).attr("class", "card match");
+    this.element.attr("class", "card match");
 };
 
 Card.prototype.close = function() {
-    $(this.element[0]).attr("class", "card");
+    this.element.attr("class", "card");
 };
 
+// Create instances of the Card prototype and assign card values to them
 function makeCards() {
+    var n = 0;
     for (n = 0; n < cardNames.length; n++) {
         cards[n] = new Card(cardNames[n]);
     }
     return cards;
 }
 
-function addToOpenCards(x) {
-    openCards.push(x);
-}
-
-function isMatch() {
-    if (openCards.length == 2) {
-        if (openCards[0].child.attr("class") == openCards[1].child.attr("class")) {
-            openCards[0].match();
-            openCards[1].match();
-        }
-        else {
-            openCards[0].close();
-            openCards[1].close();
-        }
-        openCards = [];
-        cards.every(checkMatch);
-        if (cards.every(checkMatch)) {
-            $(".modal-body p").empty().append("in " + endTime + " with " + moves + " moves and " + stars + " stars");
-            $(".modal-footer button").click(function() {
-                setupGame();
-                $(".modal").modal("hide");
-            });
-            $(".modal").modal("show");
-        }
-    }
-}
-
+// Display how many moves and stars remaining
 var moves = 0;
 var stars = 3;
 function updateMoves() {
@@ -123,6 +88,7 @@ function updateMoves() {
     }
 }
 
+// Create timer
 var startTime = 0;
 var endTime = 0;
 var timer = null;
@@ -141,7 +107,7 @@ function updateTime(interval) {
     var min = Math.floor(seconds / 60) % 60;
     var hr = Math.floor(seconds / 3600);
     endTime = hr + ":" + ("0" + min).slice(-2) + ":" + ("0" + sec).slice(-2);
-    $(".timer").empty().append(endTime);
+    $(".timer").text(endTime);
 }
 
 function setupTimer() {
@@ -158,10 +124,12 @@ function clearTimer() {
 
 }
 
-function checkMatch(card) {
-    return $(card.element[0]).attr("class") == "card match";
-}
-
+/* Set up the game board
+ *  - empty the deck
+ *  - shuffle the list of cards using the provided "shuffle" method
+ *  - call the function that displays the cards
+ *  - resets all trackers (moves, stars, timer)
+ */
 function setupGame() {
     $(".deck").empty();
     shuffle(cardNames);
@@ -179,5 +147,47 @@ function reset() {
     $(".restart").click(setupGame);
 }
 
+/*
+ * Create a new list for open cards
+ *  - if the list has two cards, check to see if the two cards match
+ *    + if the cards do match, lock the cards in the open position
+ *    + if the cards do not match, remove the cards from the list and hide the card's symbol
+ *    + if all cards have matched, display a message with the final score
+ */
+var openCards = [];
+var openCardsAllowed = 2;
+
+function addToOpenCards(x) {
+    openCards.push(x);
+}
+
+function checkMatch(card) {
+    return $(card.element[0]).attr("class") == "card match";
+}
+
+function isMatch() {
+    if (openCards.length == 2) {
+        if (openCards[0].child.attr("class") == openCards[1].child.attr("class")) {
+            openCards[0].match();
+            openCards[1].match();
+        }
+        else {
+            openCards[0].close();
+            openCards[1].close();
+        }
+        openCards = [];
+        cards.every(checkMatch);
+        if (cards.every(checkMatch)) {
+            $(".modal-body p").text("In " + endTime + " with " + moves + " moves and " + stars + " stars.");
+            $(".modal-footer button").click(function() {
+                setupGame();
+                $(".modal").modal("hide");
+            });
+            $(".modal").modal("show");
+        }
+    }
+}
+
+// Run game
 setupGame();
 reset();
