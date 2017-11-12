@@ -16,10 +16,9 @@ To run the game, open the `index.html` file.
 4. When all cards are matched, you win the game!
 
 **Note:** Try to complete the game in as few moves as possible!
-* 0-24 moves: 3 stars
-* 25-32 moves: 2 stars
-* 33-40 moves: 1 star
-* 41+ moves: 0 stars
+* 0-32 moves: 3 stars
+* 33-48 moves: 2 stars
+* 49+ moves: 1 star
 
 ## Resources
 

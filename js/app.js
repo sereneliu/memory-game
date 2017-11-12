@@ -75,16 +75,12 @@ var moves = 0;
 var stars = 3;
 function updateMoves() {
     $(".moves").empty().append(moves);
-    if (moves == 25) {
+    if (moves == 33) {
         $(".star3 i").attr("class", "fa fa-star-o");
         stars--;
     }
-    if (moves == 33) {
+    if (moves == 49) {
         $(".star2 i").attr("class", "fa fa-star-o");
-        stars--;
-    }
-    if (moves == 41) {
-        $(".star1 i").attr("class", "fa fa-star-o");
         stars--;
     }
 }
