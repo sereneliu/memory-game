@@ -22,6 +22,7 @@ function shuffle(array) {
 /* Create a Card prototype:
  * set up the HTML to be added to the page
  * set up the event listener for each card. If a card is clicked:
+ *  - on the first click, the timer is started
  *  - display the card's symbol
  *  - add the card to a *list* of "open" cards
  *  - increment moves and update the display

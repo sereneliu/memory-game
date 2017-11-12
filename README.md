@@ -1,20 +1,29 @@
 # Memory Game Project
 
-## Table of Contents
+## Overview
 
-* [Instructions](#instructions)
-* [Contributing](#contributing)
+Used HTML, CSS, and Javascript to build a simple memory game. Some people may know it as [Concentration](https://en.wikipedia.org/wiki/Concentration_(game)).
+
+## Running the Game
+
+To run the game, open the `index.html` file.
 
 ## Instructions
 
-The starter project has some HTML and CSS styling to display a static version of the Memory Game project. You'll need to convert this project from a static project to an interactive one. This will require modifying the HTML and CSS files, but primarily the JavaScript file.
+1. Click on any two cards in the grid to view their symbols.
+2. Try to remember the symbols!
+3. If the symbols match, the cards will stay open. Otherwise, they will close after 1.5 seconds.
+4. When all cards are matched, you win the game!
 
-To get started, open `js/app.js` and start building out the app's functionality
+**Note:** Try to complete the game in as few moves as possible!
+* 0-24 moves: 3 stars
+* 25-32 moves: 2 stars
+* 33-40 moves: 1 star
+* 41+ moves: 0 stars
 
-For specific, detailed instructions, look at the project instructions in the [Udacity Classroom](https://classroom.udacity.com/me).
+## Resources
 
-## Contributing
-
-This repository is the starter code for _all_ Udacity students. Therefore, we most likely will not accept pull requests.
-
-For details, check out [CONTRIBUTING.md](CONTRIBUTING.md).
+* Udacity's [starter code](https://github.com/udacity/fend-project-memory-game)
+* [JQuery](https://jquery.com/)
+* [Bootstrap](https://getbootstrap.com/) for the modal plugin
+* [Shuffle function](http://stackoverflow.com/a/2450976)
