@@ -6,7 +6,7 @@ Used HTML, CSS, and Javascript to build a simple memory game. Some people may kn
 
 ## Running the Game
 
-To run the game, open the `index.html` file.
+To run the game, click [here](https://sereneliu.github.io/memory-game/). Alternatively, you can download the project and open the `index.html` file in your browser.
 
 ## Instructions
 
